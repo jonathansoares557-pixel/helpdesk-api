@@ -4,7 +4,7 @@ API do Sistema de Gerenciamento de Chamados com três perfis: **Admin**, **Técn
 
 **Stack:** Node.js, Express 5, TypeScript, PostgreSQL, Prisma, Zod, JWT, Jest, Docker.
 
-**Deploy:** _(adicionar link do Render)_ · Front-end: _(adicionar link da Vercel)_
+**Deploy:** [https://helpdesk-api-1-mstu.onrender.com](https://helpdesk-api-1-mstu.onrender.com) · Front-end: [https://helpdesk-web-inky.vercel.app](https://helpdesk-web-inky.vercel.app)
 
 ## Rodando localmente
 
