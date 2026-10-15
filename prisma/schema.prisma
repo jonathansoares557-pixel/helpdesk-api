@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TECHNICIAN
+  CLIENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+model User {
+  id                 String   @id @default(uuid())
+  name               String
+  email              String   @unique
+  passwordHash       String
+  role               Role
+  avatarUrl          String?
+  availability       String[] @default([])
+  mustChangePassword Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  ticketsAsClient     Ticket[] @relation("ClientTickets")
+  ticketsAsTechnician Ticket[] @relation("TechnicianTickets")
+}
+
+model Service {
+  id         String   @id @default(uuid())
+  title      String
+  description String?
+  priceCents Int
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  ticketServices TicketService[]
+}
+
+model Ticket {
+  id            String       @id @default(uuid())
+  title         String
+  description   String
+  status        TicketStatus @default(OPEN)
+  scheduledDate String // YYYY-MM-DD
+  scheduledTime String // HH:MM
+  clientId      String
+  technicianId  String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  client     User            @relation("ClientTickets", fields: [clientId], references: [id], onDelete: Cascade)
+  technician User            @relation("TechnicianTickets", fields: [technicianId], references: [id])
+  services   TicketService[]
+
+  @@index([clientId])
+  @@index([technicianId, scheduledDate])
+}
+
+model TicketService {
+  id         String   @id @default(uuid())
+  ticketId   String
+  serviceId  String
+  priceCents Int // snapshot of the price when added
+  additional Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  ticket  Ticket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id])
+}

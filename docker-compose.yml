@@ -1,0 +1,26 @@
+﻿services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: helpdesk
+      POSTGRES_PASSWORD: helpdesk
+      POSTGRES_DB: helpdesk
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://helpdesk:helpdesk@db:5432/helpdesk
+      JWT_SECRET: change-me-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3333:3333"
+
+volumes:
+  pgdata:
+
